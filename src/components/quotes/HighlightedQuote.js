@@ -1,4 +1,3 @@
-import { Outlet } from "react-router";
 import classes from "./HighlightedQuote.module.css";
 
 const HighlightedQuote = (props) => {
@@ -6,7 +5,6 @@ const HighlightedQuote = (props) => {
     <figure className={classes.quote}>
       <p>{props.text}</p>
       <figcaption>{props.author}</figcaption>
-      <Outlet />
     </figure>
   );
 };

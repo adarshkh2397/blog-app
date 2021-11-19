@@ -1,33 +1,44 @@
-import { Fragment } from "react";
-
+import { Fragment, useEffect } from "react";
 import { useParams, Outlet } from "react-router-dom";
+
 import HighlightedQuote from "../components/quotes/HighlightedQuote";
 import NoQuotesFound from "../components/quotes/NoQuotesFound";
-
-const dummy_quotes = [
-  {
-    id: "bcjhasfnee",
-    author: "Adarsh",
-    text: "I wrote it!",
-  },
-  {
-    id: "atecdniewcn",
-    author: "Bob",
-    text: "Bob wrote it!",
-  },
-];
+import LoadingSpinner from "../components/UI/LoadingSpinner";
+import useHttp from "../hooks/use-http";
+import { getSingleQuote } from "../lib/api";
 
 const QuoteDetail = () => {
   const params = useParams();
+  const { quoteId } = params;
+  const {
+    sendRequest,
+    data: loadedQuote,
+    error,
+    status,
+  } = useHttp(getSingleQuote, true);
 
-  const quote = dummy_quotes.find((quote) => quote.id === params.quoteId);
+  useEffect(() => {
+    sendRequest(quoteId);
+  }, [sendRequest, quoteId]);
 
-  if (!quote) {
+  if (status === "pending") {
+    return (
+      <div className="centered">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="centered">{error}</p>;
+  }
+
+  if (!loadedQuote.text) {
     return <NoQuotesFound />;
   }
   return (
     <Fragment>
-      <HighlightedQuote text={quote.text} author={quote.author} />
+      <HighlightedQuote text={loadedQuote.text} author={loadedQuote.author} />
       <Outlet />
     </Fragment>
   );
