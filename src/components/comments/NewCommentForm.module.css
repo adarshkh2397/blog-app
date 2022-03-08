@@ -42,4 +42,14 @@
 
 .actions button {
   font-size: 1.25rem;
+  margin-top: 1rem;
+}
+
+.error{
+  font: inherit;
+  color: rgb(218, 79, 79);
+}
+
+textarea {
+  resize: none;
 }

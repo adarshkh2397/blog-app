@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import classes from "./NewCommentForm.module.css";
@@ -8,6 +8,8 @@ import { addComment } from "../../lib/api";
 
 const NewCommentForm = (props) => {
   const commentTextRef = useRef();
+  const [errorMsg, setErrorMsg] = useState("");
+  const [entering, setIsEntering] = useState(false);
   const params = useParams();
   const { onAddedComment } = props;
   const { quoteId } = params;
@@ -22,13 +24,31 @@ const NewCommentForm = (props) => {
   const submitFormHandler = (event) => {
     event.preventDefault();
     const enteredText = commentTextRef.current.value;
-    // optional: Could validate here
 
+    if (enteredText === "") {
+      setErrorMsg("No comment written.");
+      return;
+    }
+    setErrorMsg("");
     sendRequest({ commentData: { text: enteredText }, quoteId });
   };
 
+  const formFocusedHandler = () => {
+    setIsEntering(true);
+    setErrorMsg("");
+  };
+
+  const finishEnteringHandler = () => {
+    setIsEntering(false);
+    setErrorMsg("");
+  };
+
   return (
-    <form className={classes.form} onSubmit={submitFormHandler}>
+    <form
+      className={classes.form}
+      onSubmit={submitFormHandler}
+      onFocus={formFocusedHandler}
+    >
       {status === "pending" && (
         <div className="centered">
           <LoadingSpinner />
@@ -38,8 +58,11 @@ const NewCommentForm = (props) => {
         <label htmlFor="comment">Your Comment</label>
         <textarea id="comment" rows="5" ref={commentTextRef}></textarea>
       </div>
+      {!entering && errorMsg && <div className={classes.error}>{errorMsg}</div>}
       <div className={classes.actions}>
-        <button className="btn">Add Comment</button>
+        <button className="btn" onClick={finishEnteringHandler}>
+          Add Comment
+        </button>
       </div>
     </form>
   );

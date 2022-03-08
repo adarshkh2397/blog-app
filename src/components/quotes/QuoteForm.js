@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import Card from "../UI/Card";
 import LoadingSpinner from "../UI/LoadingSpinner";
@@ -7,7 +7,8 @@ import classes from "./QuoteForm.module.css";
 const QuoteForm = (props) => {
   const authorInputRef = useRef();
   const textInputRef = useRef();
-  //const [isEntering, setIsEntering] = useState(false);
+  const [error, setError] = useState("");
+  const [entering, setIsEntering] = useState(true);
 
   function submitFormHandler(event) {
     event.preventDefault();
@@ -15,22 +16,31 @@ const QuoteForm = (props) => {
     const enteredAuthor = authorInputRef.current.value;
     const enteredText = textInputRef.current.value;
 
-    // optional: Could validate here
+    if (enteredAuthor === "") {
+      setError("Author Name is required.");
+      return;
+    }
 
+    if (enteredText === "") {
+      setError("Quote is required.");
+      return;
+    }
+    setError("");
     props.onAddQuote({ author: enteredAuthor, text: enteredText });
   }
 
   const formFocusedHandler = () => {
-    //setIsEntering(true);
+    setIsEntering(true);
+    setError("");
   };
 
   const finishEnteringHandler = () => {
-    //setIsEntering(false);
+    setIsEntering(false);
+    setError("");
   };
 
   return (
     <Card>
-      {/*Prompt could be used , bout React-Router 6 does not have it}*/}
       <form
         className={classes.form}
         onSubmit={submitFormHandler}
@@ -50,6 +60,7 @@ const QuoteForm = (props) => {
           <label htmlFor="text">Text</label>
           <textarea id="text" rows="5" ref={textInputRef}></textarea>
         </div>
+        {!entering && error && <div className={classes.error}>{error}</div>}
         <div className={classes.actions}>
           <button className="btn" onClick={finishEnteringHandler}>
             Add Quote
