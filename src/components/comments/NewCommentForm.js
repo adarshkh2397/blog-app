@@ -25,7 +25,7 @@ const NewCommentForm = (props) => {
     event.preventDefault();
     const enteredText = commentTextRef.current.value;
 
-    if (enteredText === "") {
+    if (enteredText.trim() === "") {
       setErrorMsg("No comment written.");
       return;
     }

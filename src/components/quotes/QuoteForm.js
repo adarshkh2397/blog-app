@@ -16,12 +16,12 @@ const QuoteForm = (props) => {
     const enteredAuthor = authorInputRef.current.value;
     const enteredText = textInputRef.current.value;
 
-    if (enteredAuthor === "") {
+    if (enteredAuthor.trim() === "") {
       setError("Author Name is required.");
       return;
     }
 
-    if (enteredText === "") {
+    if (enteredText.trim() === "") {
       setError("Quote is required.");
       return;
     }
